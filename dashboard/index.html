@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+    <div class="contenedor">
+        <div class="tablas">
+            <h1>Promedio de calificaciones de alumnos de secundaria:</h1>
+            <canvas id="barra" width="300" height="300"></canvas>
+            <br><br><br>
+            <h1>Cantidad de alumnos aprobados:</h1>
+            <canvas id="dona"></canvas>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+
+fetch('consulta.php')
+.then(response => response.json())
+.then(data =>{
+    let matematicas=0;
+    let espanol=0;
+    let historia=0;
+    let geografia=0;
+    let ciencias=0;
+    let total=0;
+    let reprobado=0;
+    let aprobado=0;
+    
+    console.log(data);
+    for (estudiante of data) {
+        total++;
+        matematicas+=estudiante.matematicas;
+        espanol+=estudiante.espanol;
+        historia+=estudiante.historia;
+        geografia+=estudiante.geografia;
+        ciencias+=estudiante.ciencias;
+        if((estudiante.matematicas+estudiante.espanol+estudiante.historia+estudiante.geografia+estudiante.ciencias)/5>5){
+            aprobado++;
+        }else{
+            reprobado++;
+        }
+    }
+    console.log("aprobado=",aprobado);
+    console.log("reprobado=",reprobado);
+    matematicas=matematicas/total;
+    espanol=espanol/total;
+    historia=historia/total;
+    geografia=geografia/total;
+    ciencias=ciencias/total;
+    let calificaciones=[matematicas,espanol,historia,geografia,ciencias];
+
+    const ctx = document.getElementById('barra');
+
+    new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Matematicas', 'Español', 'Historia', 'Geografia', 'Ciencias'],
+        datasets: [{
+        label: 'Promedio de calificaciones',
+        data: calificaciones,
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 205, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(54, 162, 235, 0.2)'
+        ],
+    borderColor: [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)'
+        ],
+        borderWidth: 1
+        }]
+    },
+    
+    options: {
+        scales: {
+        y: {
+            beginAtZero: true
+        }
+        }
+        
+    }
+    });
+
+    new Chart(dona, {
+    type: 'doughnut',
+    data: {
+        labels: ['Alumnos aprobados','Alumnos reprobados'],
+        datasets: [{
+        label: 'Alumnos aprobados',
+        data: [aprobado,reprobado],
+        backgroundColor: [
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 99, 132, 0.2)',
+        
+        ],
+    borderColor: [
+        'rgb(255, 159, 64)',
+        'rgb(255, 99, 132)',
+        
+        ],
+        borderWidth: 1
+        }]
+    },
+    
+    options: {
+        scales: {
+        y: {
+            beginAtZero: true
+        }
+        }
+        
+    }
+    });
+    
+
+
+
+
+
+});
+
+    
+
+
+
+</script>
